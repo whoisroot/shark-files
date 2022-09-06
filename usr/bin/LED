@@ -257,10 +257,14 @@ EOF
 
 #so pgrep/pkill exclude their own pid, but not their parent
 #the parent is this script, which we don't want to kill
-if pgrep -f LED | grep -qvE "$$|${PPID}"; then
-    kill "$(pgrep -f LED | grep -vE "$$|${PPID}" | tr '\n' ' ')" > /dev/null 2>&1
+if pgrep -f LED | grep -qvE "^$$$|^${PPID}$"; then
+    for pid in "$(pgrep -f LED | grep -vE "^$$$|^${PPID}$" | tr '\n' ' ')"; do
+        kill $pid > /dev/null 2>&1
+    done
 fi
-if pgrep -f DO_A_BARREL_ROLL | grep -qvE "$$|${PPID}"; then
-    kill "$(pgrep -f DO_A_BARREL_ROLL | grep -vE "$$|${PPID}" | tr '\n' ' ')" > /dev/null 2>&1
+if pgrep -f DO_A_BARREL_ROLL | grep -qvE "^$$$|^${PPID}$"; then
+    for pid in "$(pgrep -f DO_A_BARREL_ROLL | grep -vE "^$$$|^${PPID}$" | tr '\n' ' ')"; do
+        kill $pid > /dev/null 2>&1
+    done
 fi
 run_led "$@" || show_usage
